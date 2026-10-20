@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Glowing Glass Torus & Orbital Splines — Corevex Three.js</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    /* Ambient Title Overlay */
+    .overlay {
+      position: absolute;
+      bottom: 30px;
+      left: 30px;
+      color: rgba(255, 255, 255, 0.7);
+      pointer-events: none;
+      z-index: 10;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 11px;
+    }
+    .overlay h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.25em;
+      margin-bottom: 4px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      background: rgba(0, 210, 255, 0.1);
+      border: 1px solid rgba(0, 210, 255, 0.3);
+      color: #00d2ff;
+      border-radius: 999px;
+      font-size: 10px;
+      font-family: monospace;
+      margin-top: 6px;
+    }
+  </style>
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+  <div id="canvas-container"></div>
+
+  <div class="overlay">
+    <h1>COREVEX 3D</h1>
+    <p>Glossy Glass Torus & Orbital Particle Loops</p>
+    <div class="badge">Interactive Mouse Parallax • Shader Fresnel • Smooth Hover Physics</div>
+  </div>
+
+  <script>
+    // -------------------------------------------------------------
+    // 1. Scene, Camera & WebGL Renderer Setup
+    // -------------------------------------------------------------
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0.5, 8.2);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.3;
+    container.appendChild(renderer.domElement);
+
+    // Root Group for Ring and Orbits (Tilted exactly like the reference image)
+    const mainGroup = new THREE.Group();
+    mainGroup.rotation.x = 0.58;
+    mainGroup.rotation.y = -0.42;
+    mainGroup.rotation.z = 0.35;
+    scene.add(mainGroup);
+
+    // -------------------------------------------------------------
+    // 2. Custom GLSL Shader for Glossy Translucent Glass & Fresnel
+    // -------------------------------------------------------------
+    const glassVertexShader = `
+      varying vec3 vNormal;
+      varying vec3 vPosition;
+      varying vec3 vViewPosition;
+      varying vec2 vUv;
+
+      void main() {
+        vUv = uv;
+        vNormal = normalize(normalMatrix * normal);
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        vPosition = position;
+        vViewPosition = -mvPosition.xyz;
+        gl_Position = projectionMatrix * mvPosition;
+      }
+    `;
+
+    const glassFragmentShader = `
+      varying vec3 vNormal;
+      varying vec3 vPosition;
+      varying vec3 vViewPosition;
+      varying vec2 vUv;
+      uniform float uTime;
+
+      void main() {
+        vec3 normal = normalize(vNormal);
+        vec3 viewDir = normalize(vViewPosition);
+
+        // Optical Fresnel Factor
+        float fresnel = pow(1.0 - abs(dot(viewDir, normal)), 2.8);
+
+        // Dynamic Iridescent Spectrum (Cyan, Electric Blue, Violet, Magenta)
+        vec3 cyan = vec3(0.0, 0.9, 1.0);
+        vec3 deepBlue = vec3(0.06, 0.22, 0.9);
+        vec3 violet = vec3(0.65, 0.15, 0.98);
+        vec3 electricPink = vec3(0.9, 0.25, 0.85);
+
+        // Internal swirl waves along the torus tube
+        float wave = sin(vUv.x * 14.0 + uTime * 1.8) * 0.5 + 0.5;
+        float wave2 = cos(vUv.y * 6.0 - uTime * 0.9) * 0.5 + 0.5;
+
+        vec3 ringColor = mix(cyan, violet, wave);
+        ringColor = mix(ringColor, deepBlue, wave2 * 0.45);
+        ringColor = mix(ringColor, electricPink, fresnel * 0.5);
+
+        // Luminous transmission & intense rim glow
+        vec3 finalColor = ringColor * (0.45 + fresnel * 1.7);
+        finalColor += cyan * pow(fresnel, 4.0) * 0.85;
+
+        // Specular highlight reflection from virtual light
+        vec3 lightDir = normalize(vec3(0.6, 1.0, 0.8));
+        vec3 halfVec = normalize(lightDir + viewDir);
+        float spec = pow(max(dot(normal, halfVec), 0.0), 36.0);
+        finalColor += vec3(1.0, 1.0, 1.0) * spec * 0.95;
+
+        // Translucent glass opacity: clear core with intense luminous edges
+        float alpha = clamp(0.35 + fresnel * 0.65 + spec * 0.5, 0.0, 0.95);
+
+        gl_FragColor = vec4(finalColor, alpha);
+      }
+    `;
+
+    const glassUniforms = {
+      uTime: { value: 0 }
+    };
+
+    const glassMaterial = new THREE.ShaderMaterial({
+      vertexShader: glassVertexShader,
+      fragmentShader: glassFragmentShader,
+      uniforms: glassUniforms,
+      transparent: true,
+      side: THREE.DoubleSide,
+      blending: THREE.NormalBlending,
+      depthWrite: false
+    });
+
+    // Outer Main Glass Torus
+    const mainTorusGeo = new THREE.TorusGeometry(2.35, 0.38, 50, 140);
+    const mainTorus = new THREE.Mesh(mainTorusGeo, glassMaterial);
+    mainGroup.add(mainTorus);
+
+    // Inner Luminous Swirl Torus Layer
+    const innerTorusGeo = new THREE.TorusGeometry(2.33, 0.22, 32, 100);
+    const innerMaterial = new THREE.ShaderMaterial({
+      vertexShader: glassVertexShader,
+      fragmentShader: `
+        varying vec3 vNormal;
+        varying vec3 vViewPosition;
+        varying vec2 vUv;
+        uniform float uTime;
+
+        void main() {
+          vec3 normal = normalize(vNormal);
+          vec3 viewDir = normalize(vViewPosition);
+          float fresnel = pow(1.0 - abs(dot(viewDir, normal)), 2.0);
+          
+          vec3 glowCyan = vec3(0.0, 0.95, 1.0);
+          vec3 glowViolet = vec3(0.75, 0.2, 1.0);
+          float stripe = sin(vUv.x * 28.0 + uTime * 3.2);
+          
+          vec3 col = mix(glowCyan, glowViolet, stripe * 0.5 + 0.5);
+          gl_FragColor = vec4(col, (0.2 + fresnel * 0.6) * 0.65);
+        }
+      `,
+      uniforms: glassUniforms,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    });
+    const innerTorus = new THREE.Mesh(innerTorusGeo, innerMaterial);
+    mainGroup.add(innerTorus);
+
+    // -------------------------------------------------------------
+    // 3. Surrounding Orbital Spline Loops (Ellipse Curves)
+    // -------------------------------------------------------------
+    const orbitalGroup = new THREE.Group();
+    mainGroup.add(orbitalGroup);
+
+    const orbitLines = [];
+    const orbitConfigs = [
+      { rx: 3.35, ry: 2.75, rotX: 0.22, rotY: 0.16, rotZ: 0.12, speed: 0.35, color: 0x00d2ff },
+      { rx: 3.55, ry: 2.85, rotX: -0.26, rotY: -0.22, rotZ: -0.16, speed: -0.28, color: 0xa855f7 },
+      { rx: 3.15, ry: 2.65, rotX: 0.16, rotY: -0.32, rotZ: 0.26, speed: 0.42, color: 0x38bdf8 },
+      { rx: 3.75, ry: 2.95, rotX: -0.12, rotY: 0.32, rotZ: -0.06, speed: -0.22, color: 0x818cf8 }
+    ];
+
+    orbitConfigs.forEach((orb) => {
+      const curve = new THREE.EllipseCurve(
+        0, 0,
+        orb.rx, orb.ry,
+        0, 2 * Math.PI,
+        false,
+        0
+      );
+
+      const points = curve.getPoints(120);
+      const orbitGeometry = new THREE.BufferGeometry().setFromPoints(
+        points.map(p => new THREE.Vector3(p.x, p.y, 0))
+      );
+
+      const orbitMaterial = new THREE.LineBasicMaterial({
+        color: orb.color,
+        transparent: true,
+        opacity: 0.55,
+        blending: THREE.AdditiveBlending
+      });
+
+      const orbitLine = new THREE.Line(orbitGeometry, orbitMaterial);
+      orbitLine.rotation.x = orb.rotX;
+      orbitLine.rotation.y = orb.rotY;
+      orbitLine.rotation.z = orb.rotZ;
+
+      orbitalGroup.add(orbitLine);
+      orbitLines.push({ line: orbitLine, curve, speed: orb.speed });
+    });
+
+    // -------------------------------------------------------------
+    // 4. Traveling Orbital Particle Beads
+    // -------------------------------------------------------------
+    const particleBeads = [];
+    const beadGeo = new THREE.SphereGeometry(0.045, 12, 12);
+
+    for (let i = 0; i < 8; i++) {
+      const beadMat = new THREE.MeshBasicMaterial({
+        color: i % 2 === 0 ? 0x00f0ff : 0xd946ef,
+        transparent: true,
+        opacity: 0.95,
+        blending: THREE.AdditiveBlending
+      });
+      const bead = new THREE.Mesh(beadGeo, beadMat);
+      orbitalGroup.add(bead);
+
+      particleBeads.push({
+        mesh: bead,
+        orbitIndex: i % orbitConfigs.length,
+        progress: (i / 8) + 0.1
+      });
+    }
+
+    // Floating Stardust Particles
+    const dustCount = 120;
+    const dustGeometry = new THREE.BufferGeometry();
+    const dustPositions = new Float32Array(dustCount * 3);
+    for (let i = 0; i < dustCount * 3; i += 3) {
+      dustPositions[i] = (Math.random() - 0.5) * 10;
+      dustPositions[i + 1] = (Math.random() - 0.5) * 10;
+      dustPositions[i + 2] = (Math.random() - 0.5) * 6;
+    }
+    dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
+    const dustMaterial = new THREE.PointsMaterial({
+      size: 0.035,
+      color: 0x38bdf8,
+      transparent: true,
+      opacity: 0.5,
+      blending: THREE.AdditiveBlending
+    });
+    const dust = new THREE.Points(dustGeometry, dustMaterial);
+    scene.add(dust);
+
+    // -------------------------------------------------------------
+    // 5. Ambient & Accent Lighting
+    // -------------------------------------------------------------
+    const cyanLight = new THREE.PointLight(0x00f0ff, 4.0, 16);
+    cyanLight.position.set(-3.5, 2.5, 4.5);
+    scene.add(cyanLight);
+
+    const purpleLight = new THREE.PointLight(0x9333ea, 4.5, 16);
+    purpleLight.position.set(3.5, -2.5, 3.5);
+    scene.add(purpleLight);
+
+    const ambientLight = new THREE.AmbientLight(0x050814, 2.5);
+    scene.add(ambientLight);
+
+    // -------------------------------------------------------------
+    // 6. Interactive Mouse Parallax Controls
+    // -------------------------------------------------------------
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetMouseX = 0;
+    let targetMouseY = 0;
+
+    window.addEventListener('mousemove', (e) => {
+      const x = e.clientX / window.innerWidth;
+      const y = e.clientY / window.innerHeight;
+      targetMouseX = (x - 0.5) * 0.45;
+      targetMouseY = (y - 0.5) * 0.45;
+    });
+
+    // Touch support for mobile devices
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) {
+        const x = e.touches[0].clientX / window.innerWidth;
+        const y = e.touches[0].clientY / window.innerHeight;
+        targetMouseX = (x - 0.5) * 0.45;
+        targetMouseY = (y - 0.5) * 0.45;
+      }
+    }, { passive: true });
+
+    // Responsive Window Resize Handler
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // -------------------------------------------------------------
+    // 7. Animation & Physics Loop
+    // -------------------------------------------------------------
+    const clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const elapsedTime = clock.getElapsedTime();
+      glassUniforms.uTime.value = elapsedTime;
+
+      // Smooth mouse interpolation (LERP)
+      mouseX += (targetMouseX - mouseX) * 0.05;
+      mouseY += (targetMouseY - mouseY) * 0.05;
+
+      // Continuous axial spin along torus axis
+      mainTorus.rotation.z += 0.007;
+      innerTorus.rotation.z -= 0.009;
+
+      // Subtle floating hover physics (harmonic oscillation)
+      mainGroup.position.y = Math.sin(elapsedTime * 1.2) * 0.12;
+      mainGroup.position.x = Math.cos(elapsedTime * 0.8) * 0.06;
+
+      // Smooth tilt responding to mouse parallax
+      mainGroup.rotation.x = 0.58 + mouseY * 0.5;
+      mainGroup.rotation.y = -0.42 + mouseX * 0.6;
+
+      // Orbit spline rotation
+      orbitLines.forEach((orb) => {
+        orb.line.rotation.z += orb.speed * 0.01;
+      });
+
+      // Move glowing beads along their orbital splines
+      particleBeads.forEach((bead) => {
+        bead.progress = (bead.progress + 0.0035) % 1.0;
+        const orb = orbitLines[bead.orbitIndex];
+        const pt = orb.curve.getPoint(bead.progress);
+        const vec = new THREE.Vector3(pt.x, pt.y, 0);
+        vec.applyEuler(orb.line.rotation);
+        bead.mesh.position.copy(vec);
+      });
+
+      // Slow stardust drift
+      dust.rotation.y = elapsedTime * 0.02;
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+  </script>
+</body>
+</html>

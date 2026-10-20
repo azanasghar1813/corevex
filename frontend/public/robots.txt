@@ -1,0 +1,28 @@
+# robots.txt for https://corevex.tech/
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# OpenAI Search Bot (ChatGPT Search)
+User-agent: OAI-SearchBot
+Allow: /
+
+# OpenAI Web Crawler
+User-agent: GPTBot
+Allow: /
+
+# Anthropic Claude
+User-agent: ClaudeBot
+Allow: /
+
+# Apple Search
+User-agent: Applebot
+Allow: /
+
+# Default for all other crawlers
+User-agent: *
+Allow: /
+
+Sitemap: https://corevex.tech/sitemap.xml
