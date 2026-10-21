@@ -248,7 +248,7 @@ export default function Hero({ ready = true }) {
               transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
             >
               <image
-                href="/assets/ring-left.png"
+                href="/assets/ring-left.webp"
                 x={200} y={100}
                 width={750} height={550}
                 preserveAspectRatio="xMidYMid meet"
@@ -271,9 +271,12 @@ export default function Hero({ ready = true }) {
             style={box(LAYOUT.laptop)}
           >
             <motion.img
-              src="/assets/laptop left.png"
+              src="/assets/laptop-left.webp"
               alt="Laptop displaying CoreVex POS billing software"
               draggable={false}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               animate={reduceMotion ? {} : { y: [0, -4, 0] }}
               transition={floatTransition(7)}
               className="h-full w-full select-none object-contain drop-shadow-[0_24px_25px_rgba(0,0,0,0.4)]"
@@ -291,9 +294,12 @@ export default function Hero({ ready = true }) {
               scale: 1.0,
             }}>
             <motion.img
-              src="/assets/mobile-straight.png"
+              src="/assets/mobile-straight.webp"
               alt="CoreVex mobile business overview app"
               draggable={false}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               animate={reduceMotion ? {} : { y: [0, -8, 0], rotate: [0, 0.4, 0] }}
               transition={floatTransition(5.8)}
               className="h-full w-full select-none object-contain drop-shadow-[0_22px_28px_rgba(0,0,0,0.58)]"
@@ -307,9 +313,12 @@ export default function Hero({ ready = true }) {
             style={box(LAYOUT.receipt)}
           >
             <motion.img
-              src="/assets/recipient.png"
+              src="/assets/recipient.webp"
               alt="Printed CoreVex POS receipt"
               draggable={false}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               animate={reduceMotion ? {} : { y: [0, -5, 0] }}
               transition={floatTransition(6.4, 0.3)}
               className="h-full w-full select-none object-contain drop-shadow-[0_18px_18px_rgba(0,0,0,0.48)]"

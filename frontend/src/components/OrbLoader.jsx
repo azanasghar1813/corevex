@@ -87,8 +87,11 @@ export default function OrbLoader({ onComplete }) {
             {/* Orb Image */}
             <div className="relative w-44 h-44 sm:w-56 sm:h-56 filter drop-shadow-[0_0_40px_rgba(43,127,255,0.7)]">
               <img
-                src="/assets/loader.png"
+                src="/assets/loader.webp"
                 alt="Corevex Orb"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
                 className="w-full h-full object-contain animate-spin-slow"
                 style={{ animationDuration: '14s' }}
               />
