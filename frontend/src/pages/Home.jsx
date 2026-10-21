@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
+import SolutionsBento from '../components/SolutionsBento';
+import MultiBranchSync from '../components/MultiBranchSync';
 import GlowingGlassRing from '../components/GlowingGlassRing';
 import SEO from '../components/SEO';
 import {
@@ -22,29 +24,6 @@ import {
 import { motion } from 'framer-motion';
 
 export default function Home() {
-  const solutions = [
-    {
-      icon: Code2,
-      title: 'Custom Software Engineering',
-      desc: 'Scalable, high-throughput architectures engineered specifically for your enterprise workflows.'
-    },
-    {
-      icon: Smartphone,
-      title: 'Web & Mobile Applications',
-      desc: 'Lightning-fast, user-centric mobile apps and reactive web dashboards crafted with precision.'
-    },
-    {
-      icon: Store,
-      title: 'POS & Business Management Systems',
-      desc: 'Comprehensive retail point-of-sale, offline sync, multi-branch control, and barcode billing.'
-    },
-    {
-      icon: Bot,
-      title: 'AI & Workflow Automation',
-      desc: 'Intelligent decision models, automated sync pipelines, and operational telemetry for smarter businesses.'
-    }
-  ];
-
   const featuredProducts = [
     {
       slug: 'inventory-management',
@@ -79,100 +58,13 @@ export default function Home() {
       {/* 1. Hero Section */}
       <Hero />
 
-      {/* 2. Solutions Section ("01 / OUR SOLUTIONS") */}
-      <section className="py-24 sm:py-32 relative border-t border-white/5 bg-[#05070e]">
-        {/* Glow backlight */}
-        <div className="absolute top-1/4 right-0 w-96 h-96 bg-blue-600/10 blur-[130px] rounded-full pointer-events-none" />
+      {/* 2. Modern Bento Solutions Section */}
+      <SolutionsBento />
 
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
-          {/* Eyebrow and Header */}
-          <div className="max-w-3xl mb-16">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase text-blue-400 font-['Space_Grotesk']">
-                01 / Our Solutions
-              </span>
-              <div className="h-[1px] w-12 bg-blue-500/40" />
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
-              Powerful Solutions for{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
-                Modern Businesses.
-              </span>
-            </h2>
-            <p className="mt-4 text-base sm:text-lg text-white/70 max-w-2xl leading-relaxed">
-              We build software, systems and digital experiences that help businesses work smarter, move faster, and grow with confidence.
-            </p>
-          </div>
+      {/* 3. Real-Time Multi-Branch Cloud Sync Section */}
+      <MultiBranchSync />
 
-          {/* Solutions Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* 4 Feature Cards (2x2 Grid) */}
-            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {solutions.map((item, idx) => {
-                const Icon = item.icon;
-                return (
-                  <div
-                    key={idx}
-                    className="p-6 sm:p-7 rounded-2xl glass-panel glass-panel-hover flex flex-col justify-between group"
-                  >
-                    <div>
-                      <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-5 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
-                        <Icon className="w-6 h-6" />
-                      </div>
-                      <h3 className="text-lg font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">
-                        {item.title}
-                      </h3>
-                      <p className="text-sm text-white/60 leading-relaxed">
-                        {item.desc}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Right Side Visual: System UI Showcase Card */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative rounded-2xl overflow-hidden glass-panel border border-white/10 p-2 shadow-2xl shadow-blue-950/40 group">
-                <img
-                  src="/assets/corevex-system-ui.jpg"
-                  alt="Corevex Cloud Inventory System UI"
-                  className="w-full h-auto rounded-xl object-cover transform group-hover:scale-[1.02] transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#05070e] via-transparent to-transparent opacity-60 pointer-events-none" />
-                <div className="absolute bottom-4 left-5 right-5 flex items-center justify-between pointer-events-auto">
-                  <div>
-                    <span className="text-xs uppercase tracking-wider text-blue-400 font-semibold font-mono">Live Ecosystem</span>
-                    <h4 className="text-sm font-bold text-white">Multi-Branch Cloud Sync</h4>
-                  </div>
-                  <Link
-                    to="/solutions"
-                    className="bg-blue-600/80 hover:bg-blue-600 text-white p-2 rounded-full transition-colors"
-                  >
-                    <ArrowUpRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Kicker Bar */}
-          <div className="mt-14 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <span className="text-sm text-white/50 italic">
-              From idea to impact — we build what matters.
-            </span>
-            <Link
-              to="/solutions"
-              className="group inline-flex items-center gap-2 text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors"
-            >
-              <span>Explore All Solutions</span>
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Featured Products Section */}
+      {/* 4. Featured Products Section */}
       <section className="py-24 sm:py-32 relative border-t border-white/5 bg-[#060913]">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
 
