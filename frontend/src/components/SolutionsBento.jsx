@@ -52,7 +52,7 @@ export default function SolutionsBento() {
         { icon: Cloud, label: "Global Deployment" }
       ],
       stageType: "pos",
-      stageImg: "/assets/showcase-pos-billing.png",
+      stageImg: "/assets/showcase-pos-billing.webp",
       stageDesc: "Complete point-of-sale system with barcode scanning, real-time billing and inventory tracking.",
       demoLink: "/products/pos-billing"
     },
@@ -82,7 +82,7 @@ export default function SolutionsBento() {
         { icon: Code2, title: "Custom Solutions", desc: "Built around your unique business needs." }
       ],
       stageType: "web",
-      stageImg: "/assets/showcase-web-stage.png",
+      stageImg: "/assets/showcase-web-stage.webp",
       stageWidgetsImg: "/assets/showcase-web-widgets.webp",
       stageDesc: "Modern reactive web apps with Next.js/React, Lighthouse 98 score, and ultra-low latency.",
       demoLink: "/contact?product=Web%20Applications"
@@ -141,7 +141,7 @@ export default function SolutionsBento() {
         { icon: Cloud, label: "Offline Cache Engine" }
       ],
       stageType: "scanner",
-      stageImg: "/assets/showcase-pos-stage.png",
+      stageImg: "/assets/showcase-pos-stage.webp",
       stageDesc: "Mission-critical hardware drivers engineered for retail rushes and pharmacy batch audits.",
       demoLink: "/products/pharmacy-management"
     }

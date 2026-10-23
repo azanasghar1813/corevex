@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform, useSpring } from "framer-motion";
 
 /**
  * CoreVex Hero - layered version, matched to the reference render (1600x899).
@@ -15,7 +15,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
  * Font (index.html): Inter Tight 400/500/600 from Google Fonts.
  */
 
-const EASE = [0.22, 1, 0.36, 1];
+const EASE = [0.16, 1, 0.3, 1];
 const FONT = '"Inter Tight", "Inter", ui-sans-serif, system-ui, sans-serif';
 
 /* ---------------- TUNING (all values measured on the 1600x899 reference) ---------------- */
@@ -60,17 +60,27 @@ export default function Hero({ ready = true }) {
     offset: ["start start", "end end"],
   });
 
-  // Parallax MotionValues mapped from scrollYProgress (seamless flow into Solutions without dead void)
-  const textY = useTransform(scrollYProgress, [0, 1], [0, 60]);
-  const textO = useTransform(scrollYProgress, [0, 0.85], [1, 0.2]);
-  const stageScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
-  const laptopY = useTransform(scrollYProgress, [0, 1], [0, 60]);
-  const laptopR = useTransform(scrollYProgress, [0, 1], [0, -5]);
-  const phoneY = useTransform(scrollYProgress, [0, 1], [0, -85]);
-  const receiptY = useTransform(scrollYProgress, [0, 1], [0, 40]);
-  const receiptX = useTransform(scrollYProgress, [0, 1], [0, -20]);
-  const ringRotate = useTransform(scrollYProgress, [0, 1], [0, 24]);
-  const laserO = useTransform(scrollYProgress, [0.1, 0.9], [0.3, 1]);
+  // Butter-smooth spring interpolation for the scroll progress to eliminate mouse-wheel notch jitter
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    mass: 0.2,
+    restDelta: 0.0001,
+  });
+
+  const activeProgress = reduceMotion ? scrollYProgress : smoothProgress;
+
+  // Parallax MotionValues mapped from activeProgress (seamless flow into Solutions without dead void)
+  const textY = useTransform(activeProgress, [0, 1], [0, 60]);
+  const textO = useTransform(activeProgress, [0, 0.85], [1, 0.2]);
+  const stageScale = useTransform(activeProgress, [0, 1], [1, 1.1]);
+  const laptopY = useTransform(activeProgress, [0, 1], [0, 60]);
+  const laptopR = useTransform(activeProgress, [0, 1], [0, -5]);
+  const phoneY = useTransform(activeProgress, [0, 1], [0, -85]);
+  const receiptY = useTransform(activeProgress, [0, 1], [0, 40]);
+  const receiptX = useTransform(activeProgress, [0, 1], [0, -20]);
+  const ringRotate = useTransform(activeProgress, [0, 1], [0, 24]);
+  const laserO = useTransform(activeProgress, [0.1, 0.9], [0.3, 1]);
 
   const fade = (delay) => ({
     initial: reduceMotion ? false : { opacity: 0, y: 14 },
@@ -116,8 +126,8 @@ export default function Hero({ ready = true }) {
       {/* ================= TEXT ================= */}
       <div className="relative z-20 mx-auto flex w-full max-w-[1600px] px-[clamp(1.5rem,6.25vw,6rem)] pt-28 sm:pt-32 xl:h-full xl:items-center xl:pt-14">
         <motion.div
-          style={reduceMotion ? {} : { y: textY, opacity: textO }}
-          className="w-full max-w-[640px]"
+          style={reduceMotion ? {} : { y: textY, opacity: textO, willChange: "transform, opacity" }}
+          className="w-full max-w-[640px] transform-gpu"
         >
           <div className="w-full xl:-translate-y-[3%]">
             {/* Eyebrow */}
@@ -175,8 +185,8 @@ export default function Hero({ ready = true }) {
       <div className="relative z-10 mx-auto mt-4 aspect-square w-full max-w-[720px] overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,#000_10%,#000_88%,transparent)] sm:aspect-[4/3] xl:absolute xl:right-0 xl:top-0 xl:mx-0 xl:mt-0 xl:aspect-[1600/899] xl:h-full xl:w-auto xl:max-w-none xl:overflow-visible xl:[mask-image:none]">
         <div className="pointer-events-none absolute left-1/2 top-0 aspect-[1600/899] h-full -translate-x-[61.7%] xl:left-0 xl:translate-x-0">
           <motion.div
-            style={reduceMotion ? {} : { scale: stageScale }}
-            className="relative h-full w-full"
+            style={reduceMotion ? {} : { scale: stageScale, willChange: "transform" }}
+            className="relative h-full w-full transform-gpu"
           >
             {/* Ambient light behind the ring */}
             <div
@@ -186,8 +196,8 @@ export default function Hero({ ready = true }) {
 
             {/* ---------- LAYER 1: GLASS RING + ORBITAL TRAILS ---------- */}
             <motion.div
-              style={reduceMotion ? {} : { rotate: ringRotate }}
-              className="absolute left-[17.5%] top-[8.9%] z-[8] h-[87.9%] w-[82.5%]"
+              style={reduceMotion ? {} : { rotate: ringRotate, willChange: "transform" }}
+              className="absolute left-[17.5%] top-[8.9%] z-[8] h-[87.9%] w-[82.5%] transform-gpu pointer-events-none"
             >
               <motion.svg
                 viewBox="0 0 1000 700"
@@ -302,16 +312,16 @@ export default function Hero({ ready = true }) {
 
             {/* ---------- LAYER 2: LAPTOP (bleeds off the right edge) ---------- */}
             <motion.div
-              className="absolute z-20"
+              className="absolute z-20 transform-gpu"
               style={
                 reduceMotion
                   ? box(LAYOUT.laptop)
-                  : { ...box(LAYOUT.laptop), y: laptopY, rotate: laptopR }
+                  : { ...box(LAYOUT.laptop), y: laptopY, rotate: laptopR, willChange: "transform" }
               }
             >
               <motion.div
                 {...enter(0.35, { x: 35, y: 18 })}
-                className="h-full w-full"
+                className="h-full w-full transform-gpu"
               >
                 <motion.img
                   src="/assets/laptop-left.webp"
@@ -322,34 +332,33 @@ export default function Hero({ ready = true }) {
                   decoding="async"
                   animate={reduceMotion ? {} : { y: [0, -4, 0] }}
                   transition={floatTransition(7)}
-                  className="h-full w-full select-none object-contain drop-shadow-[0_24px_25px_rgba(0,0,0,0.4)]"
+                  className="h-full w-full select-none object-contain drop-shadow-[0_24px_25px_rgba(0,0,0,0.4)] transform-gpu"
                 />
               </motion.div>
             </motion.div>
 
             {/* ---------- LAYER 3: FLOATING PHONE ---------- */}
             <motion.div
-              className="absolute z-30"
+              className="absolute z-30 transform-gpu"
               style={
                 reduceMotion
                   ? {
                       ...box(LAYOUT.phone),
                       rotate: LAYOUT.phone.rotate,
-                      translateZ: 100,
                       scale: 1.0,
                     }
                   : {
                       ...box(LAYOUT.phone),
                       rotate: LAYOUT.phone.rotate,
-                      translateZ: 100,
                       scale: 1.0,
                       y: phoneY,
+                      willChange: "transform",
                     }
               }
             >
               <motion.div
                 {...enter(0.2, { y: 35 })}
-                className="h-full w-full"
+                className="h-full w-full transform-gpu"
               >
                 <motion.img
                   src="/assets/mobile-straight.webp"
@@ -360,23 +369,23 @@ export default function Hero({ ready = true }) {
                   decoding="async"
                   animate={reduceMotion ? {} : { y: [0, -8, 0], rotate: [0, 0.4, 0] }}
                   transition={floatTransition(5.8)}
-                  className="h-full w-full select-none object-contain drop-shadow-[0_22px_28px_rgba(0,0,0,0.58)]"
+                  className="h-full w-full select-none object-contain drop-shadow-[0_22px_28px_rgba(0,0,0,0.58)] transform-gpu"
                 />
               </motion.div>
             </motion.div>
 
             {/* ---------- LAYER 4: RECEIPT (in front of the laptop) ---------- */}
             <motion.div
-              className="absolute z-40"
+              className="absolute z-40 transform-gpu"
               style={
                 reduceMotion
                   ? box(LAYOUT.receipt)
-                  : { ...box(LAYOUT.receipt), y: receiptY, x: receiptX }
+                  : { ...box(LAYOUT.receipt), y: receiptY, x: receiptX, willChange: "transform" }
               }
             >
               <motion.div
                 {...enter(0.55, { x: 18, y: 22 })}
-                className="h-full w-full"
+                className="h-full w-full transform-gpu"
               >
                 <motion.img
                   src="/assets/recipient.webp"
@@ -387,7 +396,7 @@ export default function Hero({ ready = true }) {
                   decoding="async"
                   animate={reduceMotion ? {} : { y: [0, -5, 0] }}
                   transition={floatTransition(6.4, 0.3)}
-                  className="h-full w-full select-none object-contain drop-shadow-[0_18px_18px_rgba(0,0,0,0.48)]"
+                  className="h-full w-full select-none object-contain drop-shadow-[0_18px_18px_rgba(0,0,0,0.48)] transform-gpu"
                 />
               </motion.div>
             </motion.div>

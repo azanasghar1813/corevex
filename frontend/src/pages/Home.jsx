@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
 import Hero from '../components/Hero';
 import SolutionsBento from '../components/SolutionsBento';
 import MultiBranchSync from '../components/MultiBranchSync';
@@ -15,6 +16,7 @@ import {
 } from 'lucide-react';
 
 export default function Home() {
+  const reduceMotion = useReducedMotion();
   const featuredProducts = [
     {
       slug: 'inventory-management',
@@ -60,7 +62,13 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
 
           {/* Section Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6"
+          >
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase text-blue-400 font-['Space_Grotesk']">
@@ -85,10 +93,16 @@ export default function Home() {
               <span>View All Products</span>
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 text-blue-400" />
             </Link>
-          </div>
+          </motion.div>
 
           {/* Master Product Card: Corevex POS */}
-          <div className="rounded-3xl glass-panel border border-white/10 p-8 sm:p-12 mb-10 overflow-hidden relative shadow-2xl">
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="rounded-3xl glass-panel border border-white/10 p-8 sm:p-12 mb-10 overflow-hidden relative shadow-2xl"
+          >
             <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/10 blur-[100px] pointer-events-none rounded-full" />
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -113,10 +127,17 @@ export default function Home() {
                     'Real-time multi-branch inventory management',
                     'End-of-day reconciliation and automated tax reports'
                   ].map((feat, i) => (
-                    <div key={i} className="flex items-center gap-3 text-sm text-white/90">
+                    <motion.div
+                      key={i}
+                      initial={reduceMotion ? false : { opacity: 0, x: -16 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
+                      className="flex items-center gap-3 text-sm text-white/90"
+                    >
                       <CheckCircle2 className="w-4 h-4 text-blue-400 flex-shrink-0" />
                       <span>{feat}</span>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
 
@@ -133,7 +154,11 @@ export default function Home() {
 
               {/* Product Device Visual */}
               <div className="lg:col-span-6 relative flex items-center justify-center">
-                <div className="relative w-full max-w-[500px] aspect-[1376/768]">
+                <motion.div
+                  animate={reduceMotion ? {} : { y: [0, -8, 0] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  className="relative w-full max-w-[500px] aspect-[1376/768]"
+                >
                   <img
                     src="/assets/laptop-right.png"
                     alt="Corevex POS Laptop"
@@ -144,16 +169,20 @@ export default function Home() {
                     alt="Corevex POS Receipt"
                     className="absolute inset-0 w-full h-full object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)] translate-x-30 sm:translate-x-50 lg:translate-x-50 translate-y-3 sm:translate-y-5"
                   />
-                </div>
+                </motion.div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* 3 Curated Product Cards Below */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredProducts.map((prod) => (
-              <div
+            {featuredProducts.map((prod, idx) => (
+              <motion.div
                 key={prod.slug}
+                initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.7, delay: idx * 0.12 }}
                 className="p-7 rounded-2xl glass-panel glass-panel-hover flex flex-col justify-between group"
               >
                 <div>
@@ -178,7 +207,7 @@ export default function Home() {
                   <span>Learn More</span>
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </Link>
-              </div>
+              </motion.div>
             ))}
           </div>
 
