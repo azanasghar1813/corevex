@@ -69,7 +69,7 @@ export default function Home() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6"
           >
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase text-blue-400 font-['Space_Grotesk']">
                   Featured Products
@@ -107,7 +107,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               {/* Product Info */}
-              <div className="lg:col-span-6 space-y-6">
+              <div className="lg:col-span-6 space-y-6 min-w-0">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider">
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Business Management System</span>
@@ -117,7 +117,7 @@ export default function Home() {
                   Corevex POS
                 </h3>
 
-                <p className="text-base text-white/70 leading-relaxed max-w-lg">
+                <p className="text-base text-white/70 leading-relaxed max-w-lg min-w-0">
                   A modern point-of-sale system designed for speed, simplicity, and complete business control. High-speed barcode scanning, offline caching, and multi-branch inventory.
                 </p>
 
@@ -136,7 +136,7 @@ export default function Home() {
                       className="flex items-center gap-3 text-sm text-white/90"
                     >
                       <CheckCircle2 className="w-4 h-4 text-blue-400 flex-shrink-0" />
-                      <span>{feat}</span>
+                      <span className="min-w-0">{feat}</span>
                     </motion.div>
                   ))}
                 </div>
@@ -220,7 +220,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
             {/* Left Column: Story & Principles */}
-            <div className="lg:col-span-7 space-y-6">
+            <div className="lg:col-span-7 space-y-6 min-w-0">
               <div className="flex items-center gap-3">
                 <span className="text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase text-blue-400 font-['Space_Grotesk']">
                   ✦ About Us
@@ -279,16 +279,16 @@ export default function Home() {
       {/* 5. Direct Project Inquiry & Booking Banner */}
       <section className="py-20 relative border-t border-white/5 bg-[#080d1b]">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
-          <div className="rounded-3xl glass-panel border border-blue-500/20 p-8 sm:p-14 relative overflow-hidden shadow-2xl">
+          <div className="rounded-3xl glass-panel border border-blue-500/20 p-6 sm:p-14 relative overflow-hidden shadow-2xl">
             <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-600/15 blur-[120px] rounded-full pointer-events-none" />
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-              <div className="lg:col-span-8 space-y-4">
+              <div className="lg:col-span-8 space-y-4 min-w-0">
                 <div className="flex items-center gap-2 text-blue-400 text-xs font-semibold uppercase tracking-wider">
                   <Sparkles className="w-4 h-4" />
                   <span>Let's Work Together</span>
                 </div>
-                <h3 className="text-3xl sm:text-4xl font-extrabold text-white">
+                <h3 className="text-2xl sm:text-4xl font-extrabold text-white">
                   Have a project in mind?
                 </h3>
                 <p className="text-base text-white/70 max-w-xl">

@@ -127,7 +127,7 @@ export default function Hero({ ready = true }) {
       <div className="relative z-20 mx-auto flex w-full max-w-[1600px] px-[clamp(1.5rem,6.25vw,6rem)] pt-28 sm:pt-32 xl:h-full xl:items-center xl:pt-14">
         <motion.div
           style={reduceMotion ? {} : { y: textY, opacity: textO, willChange: "transform, opacity" }}
-          className="w-full max-w-[640px] transform-gpu"
+          className="w-full max-w-[640px] transform-gpu min-w-0"
         >
           <div className="w-full xl:-translate-y-[3%]">
             {/* Eyebrow */}
@@ -142,7 +142,7 @@ export default function Hero({ ready = true }) {
             </motion.div>
 
             {/* Headline */}
-            <h1 className="mt-6 text-[clamp(2.75rem,9vw,3.75rem)] font-semibold leading-[1.03] tracking-[-0.035em] text-white sm:text-[clamp(3.25rem,8vw,5rem)] xl:mt-7 xl:text-[clamp(3.5rem,4.65vw,5.5rem)]">
+            <h1 className="mt-6 text-[clamp(2rem,9vw,3.75rem)] font-semibold leading-[1.03] tracking-[-0.035em] text-white sm:text-[clamp(3.25rem,8vw,5rem)] xl:mt-7 xl:text-[clamp(3.5rem,4.65vw,5.5rem)]">
               <RevealLine delay={0.25} ready={ready} reduce={reduceMotion}>
                 Where Science
               </RevealLine>

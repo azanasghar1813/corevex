@@ -88,7 +88,7 @@ export default function MultiBranchSync() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-5 flex flex-col justify-center"
+            className="lg:col-span-5 flex flex-col justify-center min-w-0"
           >
             {/* Eyebrow */}
             <div className="flex items-center gap-3 mb-4">
@@ -128,7 +128,7 @@ export default function MultiBranchSync() {
                     <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/25 flex items-center justify-center text-cyan-400 flex-shrink-0 group-hover:bg-cyan-500/20 group-hover:border-cyan-400/50 group-hover:scale-105 transition-all shadow-[0_0_15px_rgba(6,182,212,0.15)]">
                       <Icon className="w-5 h-5" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">
                         {feat.title}
                       </h3>

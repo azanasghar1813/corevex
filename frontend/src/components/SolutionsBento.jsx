@@ -199,7 +199,7 @@ export default function SolutionsBento() {
           {/* -----------------------------------------------------------------------
               LEFT COLUMN (lg:col-span-5): Solution Pills, Dynamic Text & Metrics
              ----------------------------------------------------------------------- */}
-          <div className="lg:col-span-5 flex flex-col justify-between py-2">
+          <div className="lg:col-span-5 flex flex-col justify-between py-2 min-w-0">
             
             {/* Interactive Solution Selector Pills */}
             <div className="flex flex-wrap items-center gap-2 mb-6">
@@ -240,7 +240,7 @@ export default function SolutionsBento() {
                 </div>
 
                 {/* Main Dynamic Headline */}
-                <h2 className="text-3xl sm:text-4xl lg:text-[2.65rem] font-extrabold tracking-tight text-white leading-[1.14]">
+                <h2 className="text-[1.65rem] sm:text-4xl lg:text-[2.65rem] font-extrabold tracking-tight text-white leading-[1.14]">
                   {current.title}
                 </h2>
 
