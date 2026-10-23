@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
   Code2,
   Smartphone,
@@ -23,6 +23,7 @@ import {
 export default function SolutionsBento() {
   const [activeTab, setActiveTab] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   // 4 Corevex Interactive Solutions matching user's design reference
   const solutionsData = [
@@ -51,7 +52,7 @@ export default function SolutionsBento() {
         { icon: Cloud, label: "Global Deployment" }
       ],
       stageType: "pos",
-      stageImg: "/assets/showcase-pos-stage.webp",
+      stageImg: "/assets/showcase-pos-billing.png",
       stageDesc: "Complete point-of-sale system with barcode scanning, real-time billing and inventory tracking.",
       demoLink: "/products/pos-billing"
     },
@@ -81,10 +82,10 @@ export default function SolutionsBento() {
         { icon: Code2, title: "Custom Solutions", desc: "Built around your unique business needs." }
       ],
       stageType: "web",
-      stageImg: "/assets/showcase-web-stage.webp",
+      stageImg: "/assets/showcase-web-stage.png",
       stageWidgetsImg: "/assets/showcase-web-widgets.webp",
       stageDesc: "Modern reactive web apps with Next.js/React, Lighthouse 98 score, and ultra-low latency.",
-      demoLink: "/solutions"
+      demoLink: "/contact?product=Web%20Applications"
     },
     {
       id: "inventory",
@@ -140,7 +141,7 @@ export default function SolutionsBento() {
         { icon: Cloud, label: "Offline Cache Engine" }
       ],
       stageType: "scanner",
-      stageImg: "/assets/showcase-pos-stage.webp",
+      stageImg: "/assets/showcase-pos-stage.png",
       stageDesc: "Mission-critical hardware drivers engineered for retail rushes and pharmacy batch audits.",
       demoLink: "/products/pharmacy-management"
     }
@@ -148,31 +149,31 @@ export default function SolutionsBento() {
 
   const current = solutionsData[activeTab];
 
-  // Auto slide rotation every 7 seconds, pauses on hover
+  // Auto slide rotation every 7 seconds, pauses on hover or reduced motion
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || reduceMotion) return;
     const timer = setInterval(() => {
       setActiveTab((prev) => (prev + 1) % solutionsData.length);
     }, 7000);
     return () => clearInterval(timer);
-  }, [isPaused, solutionsData.length]);
+  }, [isPaused, reduceMotion, solutionsData.length]);
 
   const handleNext = () => setActiveTab((prev) => (prev + 1) % solutionsData.length);
   const handlePrev = () => setActiveTab((prev) => (prev - 1 + solutionsData.length) % solutionsData.length);
 
   return (
     <section 
-      className="relative py-20 sm:py-28 bg-[#05070e] text-white overflow-hidden isolate" 
+      className="relative pt-6 sm:pt-10 pb-12 sm:pb-16 bg-[#05070e] text-white overflow-hidden isolate" 
       id="solutions"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
       {/* Laser connecting flow from Hero above */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none z-20">
-        <div className="w-[1px] h-14 bg-gradient-to-b from-blue-400 via-blue-500/80 to-transparent relative">
+        <div className="w-[1px] h-12 bg-gradient-to-b from-blue-400 via-blue-500/80 to-transparent relative">
           <motion.div
             className="absolute top-0 left-[-2px] w-[5px] h-[10px] rounded-full bg-blue-300 shadow-[0_0_15px_#60A5FA]"
-            animate={{ y: [0, 56], opacity: [0, 1, 0] }}
+            animate={{ y: [0, 48], opacity: [0, 1, 0] }}
             transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
           />
         </div>
@@ -191,14 +192,36 @@ export default function SolutionsBento() {
       <div className="max-w-[1500px] mx-auto px-6 sm:px-8 relative z-10">
 
         {/* =========================================================================
-            ROW 1: DYNAMIC SHOWCASE STAGE (Left Content + Center Stage + Right Thumbs)
+            ROW 1: CLEAN BALANCED SIDE-BY-SIDE SHOWCASE (Left Content + Right Stage)
            ========================================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch mb-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-10">
 
           {/* -----------------------------------------------------------------------
-              LEFT COLUMN (~35% width, lg:col-span-4): Dynamic Text & Metrics
+              LEFT COLUMN (lg:col-span-5): Solution Pills, Dynamic Text & Metrics
              ----------------------------------------------------------------------- */}
-          <div className="lg:col-span-4 flex flex-col justify-between py-2">
+          <div className="lg:col-span-5 flex flex-col justify-between py-2">
+            
+            {/* Interactive Solution Selector Pills */}
+            <div className="flex flex-wrap items-center gap-2 mb-6">
+              {solutionsData.map((tab, idx) => {
+                const isActive = activeTab === idx;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(idx)}
+                    className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 cursor-pointer ${
+                      isActive
+                        ? 'bg-blue-600/25 border border-blue-400 text-white shadow-[0_0_20px_rgba(59,130,246,0.35)] scale-[1.02]'
+                        : 'bg-[#070b16]/80 border border-white/10 text-white/60 hover:text-white hover:border-white/20 hover:bg-[#0c1326]'
+                    }`}
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${tab.dotColor} ${isActive ? 'animate-ping' : ''}`} />
+                    <span>{tab.tabName}</span>
+                  </button>
+                );
+              })}
+            </div>
+
             <AnimatePresence mode="wait">
               <motion.div
                 key={current.id}
@@ -272,29 +295,27 @@ export default function SolutionsBento() {
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
               <span className="text-[11px] text-white/40 font-mono">
-                {activeTab + 1} / {solutionsData.length}
+                0{activeTab + 1} / 0{solutionsData.length}
               </span>
             </div>
           </div>
 
           {/* -----------------------------------------------------------------------
-              CENTER & RIGHT: Main Showcase Screen (lg:col-span-8)
+              RIGHT COLUMN (lg:col-span-7): The Main Showcase Stage Frame
              ----------------------------------------------------------------------- */}
-          <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-12 gap-5 items-stretch">
-            
-            {/* Big Main Showcase Stage (sm:col-span-9) */}
-            <div className="sm:col-span-9 rounded-[26px] bg-[#070b16]/90 backdrop-blur-2xl border border-blue-500/30 p-5 sm:p-6 shadow-[0_0_50px_rgba(30,100,255,0.16)] flex flex-col justify-between relative overflow-hidden group">
+          <div className="lg:col-span-7">
+            <div className="rounded-[28px] bg-[#070b16]/90 backdrop-blur-2xl border border-blue-500/30 p-5 sm:p-7 shadow-[0_0_60px_rgba(30,100,255,0.18)] flex flex-col justify-between relative overflow-hidden group">
               
               {/* Stage Top Bar (Pill Badge + Live Demo Button) */}
               <div className="flex items-center justify-between gap-3 mb-4 relative z-10">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0a1228]/90 border border-blue-500/30 text-xs text-blue-200">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0a1228]/90 border border-blue-500/30 text-xs text-blue-200">
                   <span className={`h-2 w-2 rounded-full ${current.dotColor} animate-pulse`} />
                   <span className="font-medium text-[11px]">{current.pillBadge}</span>
                 </div>
 
                 <Link
                   to={current.demoLink}
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-950/60 border border-blue-500/25 text-xs text-blue-300 hover:text-white hover:border-blue-400 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-950/60 border border-blue-500/25 text-xs text-blue-300 hover:text-white hover:border-blue-400 transition-colors"
                 >
                   <Eye className="w-3.5 h-3.5 text-blue-400" />
                   <span className="text-[11px] font-semibold">Live Demo & Pricing</span>
@@ -303,7 +324,7 @@ export default function SolutionsBento() {
               </div>
 
               {/* Stage Main Image / Visual with Smooth Fade */}
-              <div className="relative my-auto rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#040812]">
+              <div className="relative my-auto rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#040812] aspect-[16/10] sm:aspect-[16/9]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={current.id}
@@ -311,11 +332,13 @@ export default function SolutionsBento() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.98 }}
                     transition={{ duration: 0.35 }}
-                    className="relative w-full h-[240px] sm:h-[300px] lg:h-[330px]"
+                    className="relative w-full h-full"
                   >
-                    <img
+                    <motion.img
                       src={current.stageImg}
                       alt={current.tabName}
+                      animate={reduceMotion ? {} : { scale: [1, 1.05] }}
+                      transition={{ duration: 7, ease: "linear" }}
                       className="w-full h-full object-cover object-center select-none"
                     />
 
@@ -340,7 +363,7 @@ export default function SolutionsBento() {
 
               {/* Stage Bottom Bar (Description + Controls) */}
               <div className="pt-4 mt-3 border-t border-white/5 flex items-center justify-between gap-4 relative z-10 text-xs">
-                <p className="text-white/60 text-[11px] sm:text-xs truncate max-w-[280px] sm:max-w-[340px]">
+                <p className="text-white/60 text-[11px] sm:text-xs truncate max-w-[280px] sm:max-w-[420px]">
                   {current.stageDesc}
                 </p>
 
@@ -351,59 +374,32 @@ export default function SolutionsBento() {
                   <button
                     onClick={handlePrev}
                     aria-label="Previous solution"
-                    className="w-7 h-7 rounded-full border border-white/15 flex items-center justify-center text-white/70 hover:text-white hover:border-blue-400 hover:bg-blue-600/20 transition-all"
+                    className="w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-white/70 hover:text-white hover:border-blue-400 hover:bg-blue-600/20 transition-all cursor-pointer"
                   >
-                    <ChevronLeft className="w-3.5 h-3.5" />
+                    <ChevronLeft className="w-4 h-4" />
                   </button>
                   <button
                     onClick={handleNext}
                     aria-label="Next solution"
-                    className="w-7 h-7 rounded-full border border-white/15 flex items-center justify-center text-white/70 hover:text-white hover:border-blue-400 hover:bg-blue-600/20 transition-all"
+                    className="w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-white/70 hover:text-white hover:border-blue-400 hover:bg-blue-600/20 transition-all cursor-pointer"
                   >
-                    <ChevronRight className="w-3.5 h-3.5" />
+                    <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
+              {/* 7s Auto-Progress line along bottom of card */}
+              {!isPaused && !reduceMotion && (
+                <motion.div
+                  key={`progress-${activeTab}`}
+                  className="absolute bottom-0 left-0 h-[3px] w-full origin-left bg-gradient-to-r from-blue-500 to-cyan-400 shadow-[0_0_10px_#3B82F6]"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 7, ease: "linear" }}
+                />
+              )}
+
             </div>
-
-            {/* Right-Hand Stacked Vertical Thumbnails (sm:col-span-3) */}
-            <div className="sm:col-span-3 flex sm:flex-col gap-3 justify-between">
-              {solutionsData.map((item, idx) => {
-                const isActive = activeTab === idx;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setActiveTab(idx)}
-                    className={`flex-1 sm:flex-initial text-left p-2 rounded-2xl border transition-all duration-300 relative overflow-hidden group cursor-pointer ${
-                      isActive 
-                        ? 'bg-blue-600/15 border-blue-400/80 shadow-[0_0_25px_rgba(59,130,246,0.25)] scale-[1.02]' 
-                        : 'bg-[#070b16]/70 border-white/10 hover:border-white/20 hover:bg-[#070b16]'
-                    }`}
-                  >
-                    {/* Small Thumbnail Preview */}
-                    <div className="w-full h-14 sm:h-16 rounded-xl overflow-hidden mb-2 bg-[#05070e] relative border border-white/5">
-                      <img
-                        src={item.thumbImg}
-                        alt={item.tabName}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 select-none"
-                      />
-                    </div>
-
-                    {/* Title with Dot */}
-                    <div className="flex items-center gap-1.5 px-1 pb-1">
-                      <span className={`w-1.5 h-1.5 rounded-full ${item.dotColor} flex-shrink-0 ${isActive ? 'animate-ping' : ''}`} />
-                      <span className={`text-[10.5px] sm:text-[11px] font-bold truncate leading-tight ${
-                        isActive ? 'text-white' : 'text-white/60 group-hover:text-white'
-                      }`}>
-                        {item.tabName}
-                      </span>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
           </div>
 
         </div>
@@ -414,7 +410,13 @@ export default function SolutionsBento() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           
           {/* Card 1: Custom Software Engineering */}
-          <div className="rounded-[22px] bg-[#070b16]/80 backdrop-blur-xl border border-blue-500/20 p-5 flex flex-col justify-between hover:border-blue-400/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.18)] transition-all duration-300 group">
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, delay: 0, ease: [0.22, 1, 0.36, 1] }}
+            className="rounded-[22px] bg-[#070b16]/80 backdrop-blur-xl border border-blue-500/20 p-5 flex flex-col justify-between hover:border-blue-400/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.18)] transition-all duration-300 group"
+          >
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/25 flex items-center justify-center text-blue-400 group-hover:scale-105 transition-all">
@@ -438,10 +440,16 @@ export default function SolutionsBento() {
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
-          </div>
+          </motion.div>
 
           {/* Card 2: Web & Mobile Applications */}
-          <div className="rounded-[22px] bg-[#070b16]/80 backdrop-blur-xl border border-purple-500/20 p-5 flex flex-col justify-between hover:border-purple-400/50 hover:shadow-[0_0_30px_rgba(168,85,247,0.18)] transition-all duration-300 group">
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className="rounded-[22px] bg-[#070b16]/80 backdrop-blur-xl border border-purple-500/20 p-5 flex flex-col justify-between hover:border-purple-400/50 hover:shadow-[0_0_30px_rgba(168,85,247,0.18)] transition-all duration-300 group"
+          >
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/25 flex items-center justify-center text-purple-400 group-hover:scale-105 transition-all">
@@ -465,10 +473,16 @@ export default function SolutionsBento() {
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
-          </div>
+          </motion.div>
 
           {/* Card 3: AI & Workflow Automation */}
-          <div className="rounded-[22px] bg-[#070b16]/80 backdrop-blur-xl border border-cyan-500/20 p-5 flex flex-col justify-between hover:border-cyan-400/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.18)] transition-all duration-300 group">
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="rounded-[22px] bg-[#070b16]/80 backdrop-blur-xl border border-cyan-500/20 p-5 flex flex-col justify-between hover:border-cyan-400/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.18)] transition-all duration-300 group"
+          >
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/25 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-all">
@@ -492,10 +506,16 @@ export default function SolutionsBento() {
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
-          </div>
+          </motion.div>
 
           {/* Card 4: POS & Business Management Systems */}
-          <div className="rounded-[22px] bg-[#070b16]/80 backdrop-blur-xl border border-blue-500/20 p-5 flex flex-col justify-between hover:border-blue-400/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.18)] transition-all duration-300 group">
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="rounded-[22px] bg-[#070b16]/80 backdrop-blur-xl border border-blue-500/20 p-5 flex flex-col justify-between hover:border-blue-400/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.18)] transition-all duration-300 group"
+          >
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/25 flex items-center justify-center text-blue-400 group-hover:scale-105 transition-all">
@@ -519,10 +539,22 @@ export default function SolutionsBento() {
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
-          </div>
+          </motion.div>
 
         </div>
 
+      </div>
+
+      {/* Bottom Laser connecting flow down to MultiBranchSync */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none z-20">
+        <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_12px_#06B6D4]" />
+        <div className="w-[1px] h-10 bg-gradient-to-b from-cyan-400 via-cyan-500/80 to-transparent relative">
+          <motion.div
+            className="absolute top-0 left-[-2px] w-[5px] h-[8px] rounded-full bg-cyan-300 shadow-[0_0_15px_#22D3EE]"
+            animate={{ y: [0, 40], opacity: [0, 1, 0] }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </div>
       </div>
     </section>
   );

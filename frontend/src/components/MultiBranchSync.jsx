@@ -1,32 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, animate, useInView } from 'framer-motion';
 import { Cloud, ShieldCheck, Zap, Share2, RefreshCw } from 'lucide-react';
 
 export default function MultiBranchSync() {
   // Live simulated metrics with subtle ticker
-  const [sales1, setSales1] = useState(2486);
-  const [sales2, setSales2] = useState(1892);
-  const [sales3, setSales3] = useState(3124);
-  const [orders1, setOrders1] = useState(48);
-  const [currentTime, setCurrentTime] = useState(() =>
-    new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
-  );
+  const [sales1, setSales1] = useState(0);
+  const [sales2, setSales2] = useState(0);
+  const [sales3, setSales3] = useState(0);
+  const [orders1, setOrders1] = useState(0);
+  const [now, setNow] = useState(new Date());
 
+  const sectionRef = useRef(null);
+  const inView = useInView(sectionRef, { once: true, amount: 0.3 });
+
+  // POLISH 5: Count-up animation when the section scrolls into view
+  useEffect(() => {
+    if (!inView) return;
+    const controls = [
+      animate(0, 2486, { duration: 1.6, ease: 'easeOut', onUpdate: v => setSales1(Math.round(v)) }),
+      animate(0, 1892, { duration: 1.6, ease: 'easeOut', onUpdate: v => setSales2(Math.round(v)) }),
+      animate(0, 3124, { duration: 1.6, ease: 'easeOut', onUpdate: v => setSales3(Math.round(v)) }),
+      animate(0, 48,   { duration: 1.6, ease: 'easeOut', onUpdate: v => setOrders1(Math.round(v)) }),
+    ];
+    return () => controls.forEach(c => c.stop());
+  }, [inView]);
+
+  // BUG FIX 1 & 3: Ticker interval with Branch 2 active and live clock
   useEffect(() => {
     const interval = setInterval(() => {
       setSales1(prev => prev + Math.floor(Math.random() * 12));
-      setSales2(prev => prev + Math.floor(Math.random() * 9));
+      setSales2(prev => prev + Math.floor(Math.random() * 15));
       setSales3(prev => prev + Math.floor(Math.random() * 18));
       if (Math.random() > 0.5) setOrders1(o => o + 1);
     }, 4500);
 
-    const timeInterval = setInterval(() => {
-      setCurrentTime(new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }));
-    }, 30000);
+    const clock = setInterval(() => setNow(new Date()), 30000);
 
     return () => {
       clearInterval(interval);
-      clearInterval(timeInterval);
+      clearInterval(clock);
     };
   }, []);
 
@@ -54,8 +66,13 @@ export default function MultiBranchSync() {
   ];
 
   return (
-    <section className="relative py-24 sm:py-32 bg-[#05070e] text-white overflow-hidden isolate border-t border-white/5" id="multi-branch-sync">
+    <section ref={sectionRef} className="relative pt-8 sm:pt-12 pb-20 sm:pb-24 bg-[#05070e] text-white overflow-hidden isolate" id="multi-branch-sync">
       
+      {/* Laser receiver stream connecting continuously from Solutions above */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none z-20">
+        <div className="w-[1px] h-10 bg-gradient-to-b from-cyan-400 via-cyan-500/60 to-transparent" />
+      </div>
+
       {/* Background Ambient Glow */}
       <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[140px] pointer-events-none -z-10" />
       <div className="absolute bottom-10 right-10 w-96 h-96 bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
@@ -132,178 +149,110 @@ export default function MultiBranchSync() {
           </motion.div>
 
           {/* =========================================================================
-              RIGHT COLUMN: 3D Isometric City Scene with Live Glass Telemetry Overlays
+              RIGHT COLUMN: 3D Isometric Network Visual & Live Telemetry Bar
              ========================================================================= */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.96 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-7 relative rounded-[28px] overflow-hidden border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.8)] bg-[#040814]"
+            className="lg:col-span-7 flex flex-col gap-4"
           >
-            {/* The 3D Isometric Night City Base Visual */}
-            <div className="relative w-full aspect-[1024/682]">
-              <img
-                src="/assets/branch-sync-city-clean.webp"
-                alt="Corevex Multi-Branch Real-Time Cloud Sync 3D Network"
-                className="w-full h-full object-cover select-none pointer-events-none"
-                loading="lazy"
-              />
+            {/* The 3D Isometric Network Showcase Frame */}
+            <div className="relative rounded-[28px] overflow-hidden border border-cyan-500/20 shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_40px_rgba(6,182,212,0.12)] bg-[#040814] group">
+              <div className="relative w-full aspect-[16/9] overflow-hidden">
+                <img
+                  src="/assets/branch-sync-network.webp"
+                  alt="Corevex Multi-Branch Real-Time Cloud Sync Network"
+                  className="w-full h-full object-cover select-none pointer-events-none group-hover:scale-[1.025] transition-transform duration-700 ease-out"
+                  loading="lazy"
+                />
 
-              {/* Luminous Overlay gradient to blend borders */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#040814]/40 via-transparent to-transparent pointer-events-none" />
+                {/* Ambient vignette gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#040814]/30 via-transparent to-transparent pointer-events-none" />
 
-              {/* -------------------------------------------------------------------
-                  LIVE GLASS TELEMETRY CARD 1: Branch 1 - Main Store (Top-Left)
-                 ------------------------------------------------------------------- */}
-              <motion.div 
-                whileHover={{ scale: 1.04 }}
-                transition={{ duration: 0.2 }}
-                className="absolute left-[36%] top-[15.5%] -translate-x-1/2 -translate-y-1/2 w-[160px] sm:w-[172px] p-2.5 sm:p-3 rounded-xl bg-[#070f22]/90 border border-cyan-400/40 backdrop-blur-md shadow-[0_10px_25px_rgba(0,0,0,0.8)] z-20 cursor-default"
-              >
-                <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-1.5">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-                    </span>
-                    <span className="text-[11px] font-bold text-white tracking-tight">Branch 1 - Main Store</span>
-                  </div>
-                </div>
-                <div className="text-[9.5px] font-mono text-white/50 mb-2 pl-3.5">
-                  Live &bull; {currentTime}
-                </div>
-                <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/10 text-center">
-                  <div>
-                    <span className="text-[9px] text-white/50 uppercase block font-mono">Sales</span>
-                    <span className="text-xs font-bold text-white font-mono">Rs {sales1.toLocaleString()}</span>
-                    <span className="text-[9px] text-emerald-400 font-mono block">&uarr; 12.5%</span>
-                  </div>
-                  <div>
-                    <span className="text-[9px] text-white/50 uppercase block font-mono">Orders</span>
-                    <span className="text-xs font-bold text-white font-mono">{orders1}</span>
-                    <span className="text-[9px] text-emerald-400 font-mono block">&uarr; 8.2%</span>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* -------------------------------------------------------------------
-                  LIVE GLASS TELEMETRY CARD 2: Branch 2 - Mall Outlet (Top-Right)
-                 ------------------------------------------------------------------- */}
-              <motion.div 
-                whileHover={{ scale: 1.04 }}
-                transition={{ duration: 0.2 }}
-                className="absolute left-[86.5%] top-[17%] -translate-x-1/2 -translate-y-1/2 w-[160px] sm:w-[172px] p-2.5 sm:p-3 rounded-xl bg-[#070f22]/90 border border-cyan-400/40 backdrop-blur-md shadow-[0_10px_25px_rgba(0,0,0,0.8)] z-20 cursor-default"
-              >
-                <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-1.5">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-                    </span>
-                    <span className="text-[11px] font-bold text-white tracking-tight">Branch 2 - Mall Outlet</span>
-                  </div>
-                </div>
-                <div className="text-[9.5px] font-mono text-white/50 mb-2 pl-3.5">
-                  Live &bull; {currentTime}
-                </div>
-                <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/10 text-center">
-                  <div>
-                    <span className="text-[9px] text-white/50 uppercase block font-mono">Sales</span>
-                    <span className="text-xs font-bold text-white font-mono">Rs {sales2.toLocaleString()}</span>
-                    <span className="text-[9px] text-emerald-400 font-mono block">&uarr; 10.3%</span>
-                  </div>
-                  <div>
-                    <span className="text-[9px] text-white/50 uppercase block font-mono">Orders</span>
-                    <span className="text-xs font-bold text-white font-mono">32</span>
-                    <span className="text-[9px] text-emerald-400 font-mono block">&uarr; 6.7%</span>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* -------------------------------------------------------------------
-                  LIVE GLASS TELEMETRY CARD 3: Branch 3 - City Center (Bottom-Left)
-                 ------------------------------------------------------------------- */}
-              <motion.div 
-                whileHover={{ scale: 1.04 }}
-                transition={{ duration: 0.2 }}
-                className="absolute left-[40.5%] top-[91%] -translate-x-1/2 -translate-y-1/2 w-[160px] sm:w-[172px] p-2.5 sm:p-3 rounded-xl bg-[#070f22]/90 border border-cyan-400/40 backdrop-blur-md shadow-[0_10px_25px_rgba(0,0,0,0.8)] z-20 cursor-default"
-              >
-                <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-1.5">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-                    </span>
-                    <span className="text-[11px] font-bold text-white tracking-tight">Branch 3 - City Center</span>
-                  </div>
-                </div>
-                <div className="text-[9.5px] font-mono text-white/50 mb-2 pl-3.5">
-                  Live &bull; {currentTime}
-                </div>
-                <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/10 text-center">
-                  <div>
-                    <span className="text-[9px] text-white/50 uppercase block font-mono">Sales</span>
-                    <span className="text-xs font-bold text-white font-mono">Rs {sales3.toLocaleString()}</span>
-                    <span className="text-[9px] text-emerald-400 font-mono block">&uarr; 15.2%</span>
-                  </div>
-                  <div>
-                    <span className="text-[9px] text-white/50 uppercase block font-mono">Orders</span>
-                    <span className="text-xs font-bold text-white font-mono">56</span>
-                    <span className="text-[9px] text-emerald-400 font-mono block">&uarr; 9.1%</span>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* -------------------------------------------------------------------
-                  LIVE GLASS TELEMETRY CARD 4: Branch 4 - Warehouse (Bottom-Right)
-                 ------------------------------------------------------------------- */}
-              <motion.div 
-                whileHover={{ scale: 1.04 }}
-                transition={{ duration: 0.2 }}
-                className="absolute left-[87.5%] top-[92.5%] -translate-x-1/2 -translate-y-1/2 w-[160px] sm:w-[172px] p-2.5 sm:p-3 rounded-xl bg-[#070f22]/90 border border-cyan-400/40 backdrop-blur-md shadow-[0_10px_25px_rgba(0,0,0,0.8)] z-20 cursor-default"
-              >
-                <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-1.5">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-                    </span>
-                    <span className="text-[11px] font-bold text-white tracking-tight">Branch 4 - Warehouse</span>
-                  </div>
-                </div>
-                <div className="text-[9.5px] font-mono text-white/50 mb-2 pl-3.5">
-                  Live &bull; {currentTime}
-                </div>
-                <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/10 text-center">
-                  <div>
-                    <span className="text-[9px] text-white/50 uppercase block font-mono">Stock</span>
-                    <span className="text-xs font-bold text-white font-mono">98%</span>
-                    <span className="text-[9px] text-emerald-400 font-mono block">&uarr; 2.4%</span>
-                  </div>
-                  <div>
-                    <span className="text-[9px] text-white/50 uppercase block font-mono">Orders</span>
-                    <span className="text-xs font-bold text-white font-mono">18</span>
-                    <span className="text-[9px] text-emerald-400 font-mono block">&uarr; 4.8%</span>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* -------------------------------------------------------------------
-                  LIVE CENTRAL SYNC PILL (Under Glowing Cloud)
-                 ------------------------------------------------------------------- */}
-              <div className="absolute left-[63%] top-[80%] -translate-x-1/2 -translate-y-1/2 px-3 sm:px-4 py-2 rounded-xl bg-[#060e22]/95 border border-cyan-400/50 backdrop-blur-md shadow-[0_10px_30px_rgba(6,182,212,0.3)] z-20 flex items-center gap-2.5">
-                <RefreshCw className="w-3.5 h-3.5 text-cyan-400 animate-spin" style={{ animationDuration: '4s' }} />
-                <div>
-                  <span className="text-[11px] font-bold text-white block leading-tight">
-                    Syncing...
+                {/* Floating Live Cloud Badge */}
+                <div className="absolute top-3.5 right-3.5 px-3 py-1.5 rounded-full bg-[#070f22]/90 border border-cyan-400/40 backdrop-blur-md shadow-lg flex items-center gap-2 pointer-events-none">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
                   </span>
-                  <span className="text-[9px] font-mono text-cyan-300/80 block leading-tight">
-                    Inventory &bull; Orders &bull; Sales &bull; Reports
+                  <span className="text-[10px] font-mono font-bold text-white tracking-wide">
+                    LIVE CLOUD &bull; {now.toLocaleTimeString('en-PK', { hour: 'numeric', minute: '2-digit' })}
                   </span>
                 </div>
               </div>
+            </div>
 
+            {/* Live Synchronized Branch Telemetry Kicker Bar */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <div className="p-3 rounded-2xl bg-[#070b16]/80 border border-white/10 hover:border-cyan-500/30 transition-colors backdrop-blur-md">
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="text-[10.5px] font-bold text-white/70">Main Store</span>
+                </div>
+                <div className="flex items-baseline justify-between">
+                  <motion.span
+                    key={sales1}
+                    initial={{ opacity: 0.35 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6 }}
+                    className="text-xs font-bold text-white font-mono"
+                  >
+                    Rs {sales1.toLocaleString()}
+                  </motion.span>
+                  <span className="text-[9.5px] text-emerald-400 font-mono">&uarr; 12.5%</span>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-[#070b16]/80 border border-white/10 hover:border-cyan-500/30 transition-colors backdrop-blur-md">
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="text-[10.5px] font-bold text-white/70">Mall Outlet</span>
+                </div>
+                <div className="flex items-baseline justify-between">
+                  <motion.span
+                    key={sales2}
+                    initial={{ opacity: 0.35 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6 }}
+                    className="text-xs font-bold text-white font-mono"
+                  >
+                    Rs {sales2.toLocaleString()}
+                  </motion.span>
+                  <span className="text-[9.5px] text-emerald-400 font-mono">&uarr; 10.3%</span>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-[#070b16]/80 border border-white/10 hover:border-cyan-500/30 transition-colors backdrop-blur-md">
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="text-[10.5px] font-bold text-white/70">City Center</span>
+                </div>
+                <div className="flex items-baseline justify-between">
+                  <motion.span
+                    key={sales3}
+                    initial={{ opacity: 0.35 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6 }}
+                    className="text-xs font-bold text-white font-mono"
+                  >
+                    Rs {sales3.toLocaleString()}
+                  </motion.span>
+                  <span className="text-[9.5px] text-emerald-400 font-mono">&uarr; 15.2%</span>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-[#070b16]/80 border border-white/10 hover:border-cyan-500/30 transition-colors backdrop-blur-md">
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="text-[10.5px] font-bold text-white/70">Warehouse</span>
+                </div>
+                <div className="flex items-baseline justify-between">
+                  <span className="text-xs font-bold text-white font-mono">98% Stock</span>
+                  <span className="text-[9.5px] text-cyan-400 font-mono">{orders1} Orders</span>
+                </div>
+              </div>
             </div>
           </motion.div>
 
