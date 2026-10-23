@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Cloud, ShieldCheck, Zap, Share2, RefreshCw, ArrowUpRight, TrendingUp } from 'lucide-react';
+import { Cloud, ShieldCheck, Zap, Share2, RefreshCw } from 'lucide-react';
 
 export default function MultiBranchSync() {
   // Live simulated metrics with subtle ticker
@@ -8,14 +8,26 @@ export default function MultiBranchSync() {
   const [sales2, setSales2] = useState(1892);
   const [sales3, setSales3] = useState(3124);
   const [orders1, setOrders1] = useState(48);
+  const [currentTime, setCurrentTime] = useState(() =>
+    new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+  );
 
   useEffect(() => {
     const interval = setInterval(() => {
       setSales1(prev => prev + Math.floor(Math.random() * 12));
+      setSales2(prev => prev + Math.floor(Math.random() * 9));
       setSales3(prev => prev + Math.floor(Math.random() * 18));
       if (Math.random() > 0.5) setOrders1(o => o + 1);
     }, 4500);
-    return () => clearInterval(interval);
+
+    const timeInterval = setInterval(() => {
+      setCurrentTime(new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }));
+    }, 30000);
+
+    return () => {
+      clearInterval(interval);
+      clearInterval(timeInterval);
+    };
   }, []);
 
   const features = [
@@ -159,12 +171,12 @@ export default function MultiBranchSync() {
                   </div>
                 </div>
                 <div className="text-[9.5px] font-mono text-white/50 mb-2 pl-3.5">
-                  Live &bull; 12:42 PM
+                  Live &bull; {currentTime}
                 </div>
                 <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/10 text-center">
                   <div>
                     <span className="text-[9px] text-white/50 uppercase block font-mono">Sales</span>
-                    <span className="text-xs font-bold text-white font-mono">${sales1.toLocaleString()}</span>
+                    <span className="text-xs font-bold text-white font-mono">Rs {sales1.toLocaleString()}</span>
                     <span className="text-[9px] text-emerald-400 font-mono block">&uarr; 12.5%</span>
                   </div>
                   <div>
@@ -193,12 +205,12 @@ export default function MultiBranchSync() {
                   </div>
                 </div>
                 <div className="text-[9.5px] font-mono text-white/50 mb-2 pl-3.5">
-                  Live &bull; 12:42 PM
+                  Live &bull; {currentTime}
                 </div>
                 <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/10 text-center">
                   <div>
                     <span className="text-[9px] text-white/50 uppercase block font-mono">Sales</span>
-                    <span className="text-xs font-bold text-white font-mono">${sales2.toLocaleString()}</span>
+                    <span className="text-xs font-bold text-white font-mono">Rs {sales2.toLocaleString()}</span>
                     <span className="text-[9px] text-emerald-400 font-mono block">&uarr; 10.3%</span>
                   </div>
                   <div>
@@ -227,12 +239,12 @@ export default function MultiBranchSync() {
                   </div>
                 </div>
                 <div className="text-[9.5px] font-mono text-white/50 mb-2 pl-3.5">
-                  Live &bull; 12:42 PM
+                  Live &bull; {currentTime}
                 </div>
                 <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/10 text-center">
                   <div>
                     <span className="text-[9px] text-white/50 uppercase block font-mono">Sales</span>
-                    <span className="text-xs font-bold text-white font-mono">${sales3.toLocaleString()}</span>
+                    <span className="text-xs font-bold text-white font-mono">Rs {sales3.toLocaleString()}</span>
                     <span className="text-[9px] text-emerald-400 font-mono block">&uarr; 15.2%</span>
                   </div>
                   <div>
@@ -261,7 +273,7 @@ export default function MultiBranchSync() {
                   </div>
                 </div>
                 <div className="text-[9.5px] font-mono text-white/50 mb-2 pl-3.5">
-                  Live &bull; 12:42 PM
+                  Live &bull; {currentTime}
                 </div>
                 <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/10 text-center">
                   <div>

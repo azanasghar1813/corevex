@@ -11,6 +11,11 @@ export const productsData = {
     description: 'Complete point-of-sale and billing system built for retail counters — barcode scanning, offline mode, and multi-branch support.',
     longDescription: 'CoreVex POS is designed for high-volume retail environments where speed and reliability are critical. It supports barcode scanners, receipt printers, and cash drawers out of the box. Best of all, it works perfectly offline, syncing your sales data to the cloud the moment your internet connection is restored.',
     features: ['Fast barcode & receipt printing', 'Works completely offline', 'Multi-branch cloud sync', 'End-of-day closing reports', 'User access controls (Cashier, Manager)', 'Hardware integration (Printers, Scanners)'],
+    highlights: [
+      { title: 'Offline First & Sync', desc: 'Works seamlessly without an active connection and syncs when online.' },
+      { title: 'Role-Based Access', desc: 'Granular permissions for managers, cashiers, and system administrators.' },
+      { title: 'Hardware Compatibility', desc: 'ESC/POS thermal printers, barcode scanners, and cash drawers.' }
+    ],
     images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNy_JRhim0Y0IBY-EtvzT8MOJlx45DSqTnZ6DVPaI77A&s=10', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfp630vA-mWOB7HsWusNhDX_zBHtbiS-7S9rUU9Z72mw&s=10'],
     price: 'Pricing will be provided on demand'
   },
@@ -23,6 +28,11 @@ export const productsData = {
     description: 'Track stock levels, purchase orders, and sales across every warehouse or branch from a single dashboard.',
     longDescription: 'Eliminate stockouts and overstocking. Our Inventory Management platform gives you complete visibility across all your warehouses and branches in real-time. Automate purchase orders when stock runs low and track product movement effortlessly.',
     features: ['Real-time stock levels', 'Low-stock automated alerts', 'Multi-warehouse tracking', 'Supplier & PO management', 'Stock transfer logs', 'Barcode inventory scanning'],
+    highlights: [
+      { title: 'Multi-Warehouse Sync', desc: 'Real-time stock balance updates across central and regional hubs.' },
+      { title: 'Automated Re-order Alerts', desc: 'Predictive notifications when inventory hits low stock threshold.' },
+      { title: 'Batch & Barcode Audit', desc: 'High-speed SKU scanning with batch and expiration tracking.' }
+    ],
     images: ['https://limetray.com/img/Audit-3.png', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQp6dj04GSFYR54F0Swzo4_VvFjYyeyHTJxl1t_7RCxrg&s=10'],
     price: 'Pricing will be provided on demand'
   },
@@ -35,6 +45,11 @@ export const productsData = {
     description: 'Built for speed. Manage tables, split bills, track ingredients, and send orders directly to the kitchen display.',
     longDescription: 'Running a restaurant requires speed and precision. Our Restaurant POS enables waiters to take orders digitally, sending them straight to the Kitchen Display System (KDS). Manage table layouts, split bills, and track raw ingredient consumption automatically.',
     features: ['Visual table management', 'Kitchen Display System (KDS)', 'Raw ingredient tracking', 'Bill splitting & tips', 'Waiter performance reports', 'Menu & combo management'],
+    highlights: [
+      { title: 'Kitchen Display (KDS) Direct', desc: 'Instant wireless order dispatch to chef monitors and kitchen printers.' },
+      { title: 'Dynamic Table Layouts', desc: 'Interactive floor maps with live occupied/free status and bill splitting.' },
+      { title: 'Ingredient-Level Recipe Costing', desc: 'Automated raw inventory deduction with every completed order.' }
+    ],
     images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmSofM1tUDWxqTbDCYmCNHc-XPwEgdumgowH7q2_slzQ&s=10', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIMvqtb3fScgIFo_pvEsNmDix9cCvmMbgdj8yj3NlmIw&s=10'],
     price: 'Pricing will be provided on demand'
   },
@@ -47,6 +62,11 @@ export const productsData = {
     description: 'Track medicine expiry dates, manage batch numbers, and process quick checkouts during rush hours.',
     longDescription: 'Specifically engineered for pharmacies and medical stores, this system tracks every batch number and strictly monitors expiry dates. Prevent losses and ensure compliance while maintaining a lightning-fast checkout experience for patients.',
     features: ['Medicine expiry date alerts', 'Batch number tracking', 'Fast checkout mode', 'Alternative medicine search', 'Prescription attachments', 'Supplier ledger'],
+    highlights: [
+      { title: 'Batch & Expiry Guard', desc: 'Strict first-expiry-first-out (FEFO) dispensing controls.' },
+      { title: 'Generic Salt Matching', desc: 'Instant alternative brand discovery during stock shortages.' },
+      { title: 'Fast Counter Checkout', desc: 'Sub-second search and thermal receipt generation under rush.' }
+    ],
     images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqh1ODeI1IN5BIdPsQ5xaNCWUkqtA5ZZkcM8moT_5jrA&s=10', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMdagxVJDl2wqc5EbgsDgZLKyyZi8aST3QTQstkRHZCA&s=10'],
     price: 'Pricing will be provided on demand'
   },
@@ -59,6 +79,11 @@ export const productsData = {
     description: 'Manage fee collections, student attendance, timetables, and parent communications in one central portal.',
     longDescription: 'Bring your entire school online. Administrators can track fee defaults and balances, teachers can log daily attendance and marks, and parents can receive automated SMS alerts. Complete digital transformation for educational institutions.',
     features: ['Fee ledger & auto-receipts', 'Student attendance tracking', 'Parent portal & SMS alerts', 'Exam & result generation', 'Library management', 'Transport & route tracking'],
+    highlights: [
+      { title: 'Fee Ledger & SMS Dispatch', desc: 'Automated payment alerts and digital fee challan generation.' },
+      { title: 'Biometric & Mobile Attendance', desc: 'Real-time daily reporting for teachers, staff, and students.' },
+      { title: 'Examination & Gradebook Engine', desc: 'Customizable report cards and grading scales.' }
+    ],
     images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlCaQgGWZbPIYz_dIiedHnn9tJi9ABRtiEMv7N6ZhZ8g&s=10', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQVXfvNAyJra_Xtq86D2o0o9Aq7KLZsn2-xWqXw4ljjw&s=10'],
     price: 'Pricing will be provided on demand'
   },

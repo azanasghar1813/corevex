@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { productsData } from '../data/products';
-import { ArrowLeft, CheckCircle2, Sparkles, ArrowRight, ShieldCheck, Cpu, Database, Laptop } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Sparkles, ArrowRight } from 'lucide-react';
 import SEO from '../components/SEO';
 
 export default function ProductDetails() {
@@ -108,41 +108,29 @@ export default function ProductDetails() {
 
           {/* Right Sidebar: Implementation & Integration */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-5">
-              <h4 className="text-xs uppercase tracking-wider text-blue-400 font-semibold font-mono">
-                Technical Highlights
-              </h4>
-              
-              <div className="space-y-4 text-xs text-white/70">
-                <div className="flex items-start gap-3">
-                  <Database className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-white block">Offline First & Sync</strong>
-                    Works seamlessly without an active connection and syncs when online.
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <ShieldCheck className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-white block">Role-Based Access</strong>
-                    Granular permissions for managers, cashiers, and system administrators.
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <Cpu className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-white block">Hardware Compatibility</strong>
-                    ESC/POS thermal printers, barcode scanners, and cash drawers.
-                  </div>
+            {product.highlights && product.highlights.length > 0 && (
+              <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-5">
+                <h4 className="text-xs uppercase tracking-wider text-blue-400 font-semibold font-mono">
+                  Technical Highlights
+                </h4>
+                
+                <div className="space-y-4 text-xs text-white/70">
+                  {product.highlights.map((h, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <CheckCircle2 className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="text-white block">{h.title}</strong>
+                        {h.desc}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
+            )}
 
-              <div className="pt-4 border-t border-white/5">
-                <span className="text-xs text-white/40 block mb-1">Pricing Model</span>
-                <span className="text-sm font-semibold text-white">{product.price || 'Tailored to multi-branch or single-counter scope'}</span>
-              </div>
+            <div className="glass-panel p-6 rounded-2xl border border-white/5 space-y-2">
+              <span className="text-xs uppercase tracking-wider text-white/40 font-semibold font-mono block">Pricing Model</span>
+              <span className="text-sm font-semibold text-white block">{product.price || 'Tailored to project scope and requirements'}</span>
             </div>
 
             {/* Quick Contact Box */}

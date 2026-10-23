@@ -6,22 +6,13 @@ import MultiBranchSync from '../components/MultiBranchSync';
 import GlowingGlassRing from '../components/GlowingGlassRing';
 import SEO from '../components/SEO';
 import {
-  Code2,
-  Smartphone,
-  Store,
-  Bot,
   CheckCircle2,
   ArrowRight,
   Sparkles,
-  BarChart3,
-  Layers,
-  Database,
-  ArrowUpRight,
   Mail,
   MapPin,
   Clock
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 export default function Home() {
   const featuredProducts = [
@@ -144,12 +135,12 @@ export default function Home() {
               <div className="lg:col-span-6 relative flex items-center justify-center">
                 <div className="relative w-full max-w-[500px] aspect-[1376/768]">
                   <img
-                    src="/assets/laptop right.png"
+                    src="/assets/laptop-right.png"
                     alt="Corevex POS Laptop"
                     className="w-full h-full object-contain filter drop-shadow-[0_15px_30px_rgba(0,0,0,0.7)]"
                   />
                   <img
-                    src="/assets/recipient.png"
+                    src="/assets/recipient.webp"
                     alt="Corevex POS Receipt"
                     className="absolute inset-0 w-full h-full object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)] translate-x-30 sm:translate-x-50 lg:translate-x-50 translate-y-3 sm:translate-y-5"
                   />

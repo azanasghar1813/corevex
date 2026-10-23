@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <div className="min-h-screen bg-[#05070e] text-white flex flex-col items-center justify-center px-6 text-center">
       <div className="w-24 h-24 mb-6 relative">
-        <img src="/assets/loader.png" alt="Corevex Orb" className="w-full h-full object-contain animate-spin-slow" />
+        <img src="/assets/loader.webp" alt="Corevex Orb" className="w-full h-full object-contain animate-spin-slow" />
       </div>
       <h1 className="text-6xl sm:text-8xl font-black font-['Space_Grotesk'] text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300 mb-4">
         404

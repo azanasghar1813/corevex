@@ -330,7 +330,7 @@ export default function SolutionsBento() {
                         </div>
                         <div>
                           <span className="text-[10px] text-white/50 block font-mono">Order Placed</span>
-                          <span className="text-xs font-bold text-white block">#1025 &bull; $24.50</span>
+                          <span className="text-xs font-bold text-white block">#1025 &bull; Rs 2,450</span>
                         </div>
                       </div>
                     )}
